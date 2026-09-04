@@ -47,10 +47,11 @@ export function MagicWordCard({ word, onSelect }: MagicWordCardProps) {
   const handleShare = async (event: React.MouseEvent) => {
     stop(event)
     const text = `${word.situation}\n\n"${word.text}"\n\nBuck: ${word.buck}\nอาชีพ: ${word.occupation}`
+    const shareApi = navigator as Navigator & { share?: (data: ShareData) => Promise<void> }
     try {
-      if (navigator.share) await navigator.share({ title: 'Vajee Magic Word', text })
+      if (typeof shareApi.share === 'function') await shareApi.share({ title: 'Vajee Magic Word', text })
       else await navigator.clipboard.writeText(text)
-      toast.success(navigator.share ? 'แชร์สำเร็จ' : 'คัดลอกข้อความสำหรับแชร์แล้ว')
+      toast.success(typeof shareApi.share === 'function' ? 'แชร์สำเร็จ' : 'คัดลอกข้อความสำหรับแชร์แล้ว')
     } catch { toast.error('แชร์ไม่สำเร็จ') }
   }
   const handleFeedback = (next: 'helpful' | 'not_helpful', event: React.MouseEvent) => {
